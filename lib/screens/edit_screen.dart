@@ -63,6 +63,33 @@ class _EditScreenState extends State<EditScreen> {
     }
   }
 
+  void deleteData(id) async {
+    //request add
+    final pref = await SharedPreferences.getInstance();
+    final token = pref.getString('token');
+    final response = await http.delete(
+      Uri.parse('http://192.168.240.84:8000/api/categories/$id'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+    print(response.statusCode);
+    print(response.body);
+    if (response.statusCode == 204) {
+      // ignore: use_build_context_synchronously
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext context) => const HomePage()));
+    } else {
+      final jsonResponse = json.decode(response.body);
+      print(jsonResponse);
+      // print(loginError.errors?.email?.elementAt(0));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,11 +112,25 @@ class _EditScreenState extends State<EditScreen> {
             SizedBox(
               height: 50,
               width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  editData(widget.id);
-                },
-                child: const Text("Edit Data"),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        editData(widget.id);
+                      },
+                      child: const Text("Edit Data"),
+                    ),
+                  ),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        deleteData(widget.id);
+                      },
+                      child: const Text("Delete Data"),
+                    ),
+                  ),
+                ],
               ),
             ),
             const SizedBox(
