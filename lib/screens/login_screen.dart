@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_gusta/models/loginError.dart';
 import 'package:flutter_gusta/models/token.dart';
+import 'package:flutter_gusta/screens/home.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -69,7 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     body: {
                       'email': _emailController.text,
                       'password': _passwordController.text,
-                      'device_name': 'android',
+                      // 'device_name': 'android',
                     },
                   );
                   if (response.statusCode == 200) {
@@ -78,7 +79,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     final prefs = await SharedPreferences.getInstance();
                     print("Token From Api ${token.token}");
                     if (token.token != null) {
-                      await prefs.setString('token', token.token!);
+                      await prefs.setString(
+                          'token', jsonDecode(response.body)['token']);
                       setState(() {
                         isLoginInProgress = false;
                         isLoggedIn = true;
@@ -89,7 +91,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       }
 
                       if (isLoggedIn) {
-                        Navigator.pushReplacementNamed(context, '/home');
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    const HomePage()));
                       }
                     }
                   } else {
