@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_gusta/models/token.dart';
 import 'package:flutter_gusta/screens/add_screen.dart';
+import 'package:flutter_gusta/screens/edit_screen.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_gusta/models/categories.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -83,15 +84,15 @@ class _HomePageState extends State<HomePage> {
                             title: Text(snapshot.data![index].name),
                             trailing: IconButton(
                               onPressed: () {
-                                // Navigator.push(
-                                //     context,
-                                //     MaterialPageRoute(
-                                //         builder: (BuildContext context) =>
-                                //             EditScreen(
-                                //                 categoryId:
-                                //                     snapshot.data![index].id,
-                                //                 category: snapshot
-                                //                     .data![index].name)));
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            EditScreen(
+                                              id: snapshot.data![index].id,
+                                              category:
+                                                  snapshot.data![index].name,
+                                            )));
                               },
                               icon: const Icon(
                                 Icons.edit,
