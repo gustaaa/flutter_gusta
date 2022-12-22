@@ -26,7 +26,16 @@ class _RegisterScreen extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login Screen'),
+        title: const Center(
+          child: Text(
+            'Register Screen',
+            style: TextStyle(
+              fontSize: 20.0,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8),
@@ -35,7 +44,8 @@ class _RegisterScreen extends State<RegisterScreen> {
             TextFormField(
               controller: nameController,
               decoration: const InputDecoration(
-                labelText: 'Nama',
+                labelText: 'Nama Lengkap',
+                prefixIcon: Icon(Icons.person),
               ),
             ),
             const SizedBox(
@@ -45,6 +55,7 @@ class _RegisterScreen extends State<RegisterScreen> {
               controller: emailController,
               decoration: const InputDecoration(
                 labelText: 'Email',
+                prefixIcon: Icon(Icons.email),
               ),
             ),
             const SizedBox(
@@ -54,13 +65,15 @@ class _RegisterScreen extends State<RegisterScreen> {
               controller: passwordController,
               decoration: const InputDecoration(
                 labelText: 'Password',
+                prefixIcon: Icon(Icons.password),
               ),
               obscureText: true,
             ),
             TextFormField(
               controller: passwordConfirmationController,
               decoration: const InputDecoration(
-                labelText: 'Konfiramsi Password',
+                labelText: 'Konfirmasi Password',
+                prefixIcon: Icon(Icons.password),
               ),
               obscureText: true,
             ),
@@ -75,16 +88,15 @@ class _RegisterScreen extends State<RegisterScreen> {
                   setState(() {
                     isLoginInProgress = true;
                   });
-                  //request login
+                  //request register
                   Map<String, String> headers = {"Accept": "application/json"};
                   final response = await http.post(
-                    Uri.parse('http://192.168.240.84:8000/api/auth/register'),
+                    Uri.parse('http://192.168.1.7:8000/api/auth/register'),
                     headers: headers,
                     body: {
                       'name': nameController.text,
                       'email': emailController.text,
                       'password': passwordController.text,
-                      // 'device_name': 'android',
                     },
                   );
                   print(response.body);
@@ -112,26 +124,46 @@ class _RegisterScreen extends State<RegisterScreen> {
                   } else {
                     final jsonResponse = json.decode(response.body);
                     final loginError = LoginError.fromJson(jsonResponse);
-                    // print(loginError.message);
-                    // print(loginError.errors?.email?.elementAt(0));
                     setState(() {
                       isLoginInProgress = false;
                       isLoggedIn = false;
                     });
                   }
                 },
-                child: const Text("Register"),
+                child: const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Text(
+                    "Register",
+                    style: TextStyle(
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
               ),
             ),
-            Center(
+            const SizedBox(
+              height: 8,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text("Sudah punya akun?"),
-                  InkWell(
-                      onTap: () {
-                        Navigator.pushReplacementNamed(context, '/');
-                      },
-                      child: const Text("Login"))
+                  const Text(
+                    "Have account?",
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pushReplacementNamed(context, '/');
+                    },
+                    child: const Text(
+                      "Login",
+                      style: TextStyle(
+                        color: Colors.blueAccent,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  )
                 ],
               ),
             ),

@@ -29,7 +29,16 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login Screen'),
+        title: const Center(
+          child: Text(
+            'Login Screen',
+            style: TextStyle(
+              fontSize: 20.0,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8),
@@ -39,6 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
               controller: _emailController,
               decoration: const InputDecoration(
                 labelText: 'Email',
+                prefixIcon: Icon(Icons.email),
               ),
             ),
             const SizedBox(
@@ -48,6 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
               controller: _passwordController,
               decoration: const InputDecoration(
                 labelText: 'Password',
+                prefixIcon: Icon(Icons.password),
               ),
               obscureText: true,
             ),
@@ -59,18 +70,19 @@ class _LoginScreenState extends State<LoginScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
-                  setState(() {
-                    isLoginInProgress = true;
-                  });
+                  setState(
+                    () {
+                      isLoginInProgress = true;
+                    },
+                  );
                   //request login
                   Map<String, String> headers = {"Accept": "application/json"};
                   final response = await http.post(
-                    Uri.parse('http://192.168.240.84:8000/api/auth/login'),
+                    Uri.parse('http://192.168.1.7:8000/api/auth/login'),
                     headers: headers,
                     body: {
                       'email': _emailController.text,
                       'password': _passwordController.text,
-                      // 'device_name': 'android',
                     },
                   );
                   if (response.statusCode == 200) {
@@ -80,11 +92,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     print("Token From Api ${token.token}");
                     if (token.token != null) {
                       await prefs.setString(
-                          'token', jsonDecode(response.body)['token']);
-                      setState(() {
-                        isLoginInProgress = false;
-                        isLoggedIn = true;
-                      });
+                        'token',
+                        jsonDecode(response.body)['token'],
+                      );
+                      setState(
+                        () {
+                          isLoginInProgress = false;
+                          isLoggedIn = true;
+                        },
+                      );
 
                       if (!mounted) {
                         return;
@@ -92,39 +108,58 @@ class _LoginScreenState extends State<LoginScreen> {
 
                       if (isLoggedIn) {
                         Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (BuildContext context) =>
-                                    const HomePage()));
+                          context,
+                          MaterialPageRoute(
+                            builder: (BuildContext context) => const HomePage(),
+                          ),
+                        );
                       }
                     }
                   } else {
                     final jsonResponse = json.decode(response.body);
                     final loginError = LoginError.fromJson(jsonResponse);
-                    // print(loginError.message);
-                    // print(loginError.errors?.email?.elementAt(0));
-                    setState(() {
-                      isLoginInProgress = false;
-                      isLoggedIn = false;
-                    });
+                    setState(
+                      () {
+                        isLoginInProgress = false;
+                        isLoggedIn = false;
+                      },
+                    );
                   }
                 },
-                child: const Text("Login"),
+                child: const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Text(
+                    "Login",
+                    style: TextStyle(
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
               ),
             ),
             const SizedBox(
               height: 8,
             ),
-            Align(
-              alignment: Alignment.center,
+            Padding(
+              padding: const EdgeInsets.all(8.0),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text("Belum punya akun?"),
-                  InkWell(
-                      onTap: () {
-                        Navigator.pushReplacementNamed(context, '/register');
-                      },
-                      child: Text("Daftar"))
+                  const Text(
+                    "Don't have account?",
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pushReplacementNamed(context, '/register');
+                    },
+                    child: const Text(
+                      "Register",
+                      style: TextStyle(
+                        color: Colors.blueAccent,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  )
                 ],
               ),
             ),

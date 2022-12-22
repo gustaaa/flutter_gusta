@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gusta/screens/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import '../models/loginError.dart';
-import '../models/token.dart';
 
 class AddScreen extends StatefulWidget {
   const AddScreen({super.key});
@@ -24,7 +22,7 @@ class _AddScreenState extends State<AddScreen> {
       'name': nameController.text,
     };
     final response = await http.post(
-      Uri.parse('http://192.168.240.84:8000/api/categories'),
+      Uri.parse('http://192.168.1.7:8000/api/categories'),
       body: jsonEncode(body),
       headers: {
         'Content-Type': 'application/json',
@@ -37,13 +35,14 @@ class _AddScreenState extends State<AddScreen> {
     if (response.statusCode == 201) {
       // ignore: use_build_context_synchronously
       Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (BuildContext context) => const HomePage()));
+        context,
+        MaterialPageRoute(
+          builder: (BuildContext context) => const HomePage(),
+        ),
+      );
     } else {
       final jsonResponse = json.decode(response.body);
       print(jsonResponse);
-      // print(loginError.errors?.email?.elementAt(0));
     }
   }
 
@@ -51,7 +50,16 @@ class _AddScreenState extends State<AddScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Screen'),
+        title: const Center(
+          child: Text(
+            'Add Screen',
+            style: TextStyle(
+              fontSize: 20.0,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8),
@@ -60,7 +68,7 @@ class _AddScreenState extends State<AddScreen> {
             TextFormField(
               controller: nameController,
               decoration: const InputDecoration(
-                labelText: 'Nama',
+                labelText: 'Category Name',
               ),
             ),
             const SizedBox(
@@ -73,7 +81,7 @@ class _AddScreenState extends State<AddScreen> {
                 onPressed: () {
                   addData();
                 },
-                child: const Text("Tambah Data"),
+                child: const Text("Add Category"),
               ),
             ),
             const SizedBox(

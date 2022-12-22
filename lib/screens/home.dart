@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_gusta/models/token.dart';
 import 'package:flutter_gusta/screens/add_screen.dart';
 import 'package:flutter_gusta/screens/edit_screen.dart';
 import 'package:http/http.dart' as http;
@@ -29,7 +28,7 @@ class _HomePageState extends State<HomePage> {
       'Authorization': 'Bearer $token'
     };
     try {
-      var url = Uri.parse("http://192.168.240.84:8000/api/categories");
+      var url = Uri.parse("http://192.168.1.7:8000/api/categories");
 
       final response = await http.get(url, headers: headers);
 
@@ -54,14 +53,25 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.blueAccent,
         onPressed: () {
           Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (BuildContext context) => const AddScreen()));
+            context,
+            MaterialPageRoute(
+              builder: (BuildContext context) => const AddScreen(),
+            ),
+          );
         },
         child: const Icon(Icons.add),
       ),
       appBar: AppBar(
-        title: const Text('Home Page'),
+        title: const Center(
+          child: Text(
+            'Home Page',
+            style: TextStyle(
+              fontSize: 20.0,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -69,7 +79,14 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('List Categories'),
+              const Text(
+                'List Categories',
+                style: TextStyle(
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
               FutureBuilder<List<Category>?>(
                 future: getList(),
                 builder: (context, snapshot) {
@@ -85,14 +102,15 @@ class _HomePageState extends State<HomePage> {
                             trailing: IconButton(
                               onPressed: () {
                                 Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (BuildContext context) =>
-                                            EditScreen(
-                                              id: snapshot.data![index].id,
-                                              category:
-                                                  snapshot.data![index].name,
-                                            )));
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        EditScreen(
+                                      id: snapshot.data![index].id,
+                                      category: snapshot.data![index].name,
+                                    ),
+                                  ),
+                                );
                               },
                               icon: const Icon(
                                 Icons.edit,
@@ -104,11 +122,13 @@ class _HomePageState extends State<HomePage> {
                       },
                     );
                   } else {
-                    return const Center(child: CircularProgressIndicator());
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
                   }
                 },
               ),
-              SizedBox(
+              const SizedBox(
                 height: 8,
               ),
               SizedBox(
@@ -121,7 +141,7 @@ class _HomePageState extends State<HomePage> {
                     final token = pref.getString('token');
 
                     final logoutRequest = await http.post(
-                      Uri.parse('http://192.168.240.84:8000/api/auth/logout'),
+                      Uri.parse('http://192.168.1.7:8000/api/auth/logout'),
                       headers: {
                         'Content-Type': 'application/json',
                         'Accept': 'application/json',
@@ -137,9 +157,9 @@ class _HomePageState extends State<HomePage> {
                       Navigator.of(context).pushReplacementNamed('/');
                     }
                   },
-                  child: Text('Logout'),
+                  child: const Text('Logout'),
                 ),
-              )
+              ),
             ],
           ),
         ),

@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gusta/screens/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import '../models/loginError.dart';
-import '../models/token.dart';
 
 class EditScreen extends StatefulWidget {
   final int id;
@@ -33,14 +31,14 @@ class _EditScreenState extends State<EditScreen> {
   }
 
   void editData(id) async {
-    //request add
+    //request edit
     final pref = await SharedPreferences.getInstance();
     final token = pref.getString('token');
     Map body = {
       'name': nameController.text,
     };
     final response = await http.put(
-      Uri.parse('http://192.168.240.84:8000/api/categories/$id'),
+      Uri.parse('http://192.168.1.7:8000/api/categories/$id'),
       body: jsonEncode(body),
       headers: {
         'Content-Type': 'application/json',
@@ -53,22 +51,23 @@ class _EditScreenState extends State<EditScreen> {
     if (response.statusCode == 200) {
       // ignore: use_build_context_synchronously
       Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (BuildContext context) => const HomePage()));
+        context,
+        MaterialPageRoute(
+          builder: (BuildContext context) => const HomePage(),
+        ),
+      );
     } else {
       final jsonResponse = json.decode(response.body);
       print(jsonResponse);
-      // print(loginError.errors?.email?.elementAt(0));
     }
   }
 
   void deleteData(id) async {
-    //request add
+    //request delete
     final pref = await SharedPreferences.getInstance();
     final token = pref.getString('token');
     final response = await http.delete(
-      Uri.parse('http://192.168.240.84:8000/api/categories/$id'),
+      Uri.parse('http://192.168.1.22:8000/api/categories/$id'),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -80,13 +79,14 @@ class _EditScreenState extends State<EditScreen> {
     if (response.statusCode == 204) {
       // ignore: use_build_context_synchronously
       Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (BuildContext context) => const HomePage()));
+        context,
+        MaterialPageRoute(
+          builder: (BuildContext context) => const HomePage(),
+        ),
+      );
     } else {
       final jsonResponse = json.decode(response.body);
       print(jsonResponse);
-      // print(loginError.errors?.email?.elementAt(0));
     }
   }
 
@@ -94,7 +94,16 @@ class _EditScreenState extends State<EditScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Screen'),
+        title: const Center(
+          child: Text(
+            'Edit Screen',
+            style: TextStyle(
+              fontSize: 20.0,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8),
@@ -103,7 +112,7 @@ class _EditScreenState extends State<EditScreen> {
             TextFormField(
               controller: nameController,
               decoration: const InputDecoration(
-                labelText: 'Nama',
+                labelText: 'Category Name',
               ),
             ),
             const SizedBox(
@@ -113,13 +122,27 @@ class _EditScreenState extends State<EditScreen> {
               height: 50,
               width: double.infinity,
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
                         editData(widget.id);
                       },
-                      child: const Text("Edit Data"),
+                      child: const Text(
+                        "Update",
+                        style: TextStyle(
+                            fontSize: 15,
+                            letterSpacing: 2,
+                            color: Colors.white),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.blue,
+                        padding: EdgeInsets.symmetric(horizontal: 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
                     ),
                   ),
                   Expanded(
@@ -127,7 +150,20 @@ class _EditScreenState extends State<EditScreen> {
                       onPressed: () {
                         deleteData(widget.id);
                       },
-                      child: const Text("Delete Data"),
+                      child: const Text(
+                        "Delete",
+                        style: TextStyle(
+                            fontSize: 15,
+                            letterSpacing: 2,
+                            color: Colors.white),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.blue,
+                        padding: EdgeInsets.symmetric(horizontal: 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
                     ),
                   ),
                 ],
